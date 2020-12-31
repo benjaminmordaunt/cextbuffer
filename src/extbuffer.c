@@ -11,6 +11,8 @@
 	#define CEXTBUFFER_ALIGN 1
 #endif /* CEXTBUFFER_ALIGN */
 
+#define CEXTARG(x) x, sizeof(x)
+
 #include <stdlib.h>
 
 typedef struct ceb_buffer_sz {
@@ -31,7 +33,7 @@ typedef struct ceb_buffer {
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
 	
-	*(buf->buf + used_sz) = *obj_ref; // Note that this assumes that the caller was truthful about size. 
+	*(buf->buf + buf->used_sz) = *obj_ref; // Note that this assumes that the caller was truthful about size. 
 	buf->used_sz += sz;
 	return 0;
 }
