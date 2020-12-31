@@ -29,8 +29,10 @@ typedef struct ceb_buffer {
 } ceb_buffer_t;
 
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
-	if(buf->sz - buf->used_sz < sz) { return NULL; } // In future, this will resize the underlying buffer.
+	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
 	
 	*(buf + used_sz) = *obj_ref; // Note that this assumes that the caller was truthful about size. 
+	buf->used_size += sz;
+	return 0;
 }
 
