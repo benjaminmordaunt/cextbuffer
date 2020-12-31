@@ -33,8 +33,24 @@ typedef struct ceb_buffer {
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
 	
+	/* NOTE: memcpy not used here as sizes pre-verified */	
 	*(buf->buf + buf->used_sz) = *obj_ref; // Note that this assumes that the caller was truthful about size. 
 	buf->used_sz += sz;
+
+	// Add type size
+	// TODO: Handle case where _ceb_buffer_sz_t runs out of size_t slots
+	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
+	(buf->types).sz_buf[cbtb_idx] = sz;
 	return 0;
 }
+
+char ceb_remove_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) { // Size argument to accommodate CEXTARG macro
+	// NOTE: This function assumes that the value of *obj_ref has not changed since adding to buffer. TODO Add indexing
+	
+	// Iterate through type lengths
+	for(int i = 0; 1; i++) {
+		size_t jmplen = (buf->types).sz_buf[i];
+	}
+}
+
 
