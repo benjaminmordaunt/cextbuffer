@@ -50,10 +50,13 @@ char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
 	
 	// Iterate through type lengths
 	for(i = 0; i < idx; i++) {
-		seek_ptr += (buf->types).sz_buf[i];
+		seek_ptr += (buf->types).sz_buf[i]; // Consider using accumulating lengths (i.e. [a, a+b, a+b+c], instead of [a, b, c] to mitigate need for long loops)
 	}
 
 	memmove(seek_ptr, (seek_ptr + (buf->types).sz_buf[i]), buf->types.sz - (seek_ptr - buf->buf));
+	
+	// Recursive call to remove corresponding type size
+	ceb_remove_object(&buf->types, idx);
 	return 0;
 }
 
