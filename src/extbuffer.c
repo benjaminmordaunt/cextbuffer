@@ -44,13 +44,17 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	return 0;
 }
 
-char ceb_remove_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) { // Size argument to accommodate CEXTARG macro
-	// NOTE: This function assumes that the value of *obj_ref has not changed since adding to buffer. TODO Add indexing
+char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
+	int i = 0;
+	void *seek_ptr = buf->buf;
 	
 	// Iterate through type lengths
-	for(int i = 0; 1; i++) {
-		size_t jmplen = (buf->types).sz_buf[i];
+	for(i = 0; i < idx; i++) {
+		seek_ptr += (buf->types).sz_buf[i];
 	}
+
+	memmove(seek_ptr, (seek_ptr + (buf->types).sz_buf[i]), buf->types.sz - (seek_ptr - buf->buf));
+	return 0;
 }
 
 
