@@ -18,7 +18,7 @@
 typedef struct ceb_buffer_sz {
 	size_t sz;
 	size_t used_sz;
-	size_t *sz_buf;
+	size_t *buf;
 	int rsz_ratio;
 } _ceb_buffer_sz_t;
 
@@ -44,6 +44,14 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	return 0;
 }
 
+char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
+	void *seek_ptr = buf->buf + idx * sizeof(size_t);
+
+	memmove(seek_ptr, seek_ptr + sizeof(size_t), buf->sz - (seek_ptr - buf->buf));
+	buf->used_sz -= sizeof(size_t);
+	return 0;
+}
+
 char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
 	int i = 0;
 	void *seek_ptr = buf->buf;
@@ -54,9 +62,10 @@ char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
 	}
 
 	memmove(seek_ptr, (seek_ptr + (buf->types).sz_buf[i]), buf->types.sz - (seek_ptr - buf->buf));
-	
-	// Recursive call to remove corresponding type size
-	ceb_remove_object(&buf->types, idx);
+	buf->used_sz -= (buf->types).sz_buf[i];
+
+	// Call to remove corresponding type size
+	_ceb_remove_type_sz(&buf->types, idx);
 	return 0;
 }
 
