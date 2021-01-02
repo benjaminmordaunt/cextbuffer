@@ -12,6 +12,7 @@
 #endif /* CEXTBUFFER_ALIGN */
 
 #define CEXTARG(x) x, (sizeof x)
+#define CEXTGET(buf, idx, type) *((type*)ceb_get_object(buf, idx))
 
 #include <stdlib.h>
 #include <string.h>
