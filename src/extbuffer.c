@@ -41,7 +41,12 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	// Add type size
 	// TODO: Handle case where _ceb_buffer_sz_t runs out of size_t slots
 	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
-	(buf->types).buf[cbtb_idx] = sz;
+
+	if (!cbtb_idx)
+		(buf->types).buf[cbtb_idx] = sz;
+	else
+		(buf->types).buf[cbtb_idx] = sz + (buf->types).buf[cbtb_idx-1];
+
 	return 0;
 }
 
@@ -54,13 +59,10 @@ char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
 }
 
 char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
-	int i = 0;
-	void *seek_ptr = buf->buf;
+	void *seek_ptr;
 	
-	// Iterate through type lengths
-	for(i = 0; i < idx; i++) {
-		seek_ptr = (void*)((uintptr_t)seek_ptr + (uintptr_t)(buf->types).buf[i]); // Consider using accumulating lengths (i.e. [a, a+b, a+b+c], instead of [a, b, c] to mitigate need for long loops)
-	}
+	// Get accumulated type length
+	seek_ptr = (buf->types).buf[idx]; 
 
 	memmove(seek_ptr, (void*)((uintptr_t)seek_ptr + (uintptr_t)(buf->types).buf[i]), buf->types.sz - ((uintptr_t)seek_ptr - (uintptr_t)buf->buf));
 	buf->used_sz -= (buf->types).buf[i];
