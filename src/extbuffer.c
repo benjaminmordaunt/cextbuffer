@@ -11,7 +11,7 @@
 	#define CEXTBUFFER_ALIGN 1
 #endif /* CEXTBUFFER_ALIGN */
 
-#define CEXTARG(x) x, sizeof(x)
+#define CEXTARG(x) x, (sizeof x)
 
 #include <stdlib.h>
 #include <string.h>
