@@ -33,6 +33,20 @@ typedef struct ceb_buffer {
 	int rsz_ratio;          // Ratio /100 when the buffer should be resized.
 } ceb_buffer_t;
 
+char ceb_init_buffer(ceb_buffer_t *buf, size_t init_sz) {
+	buf->buf = calloc(init_sz, 1);
+	buf->used_sz = 0;
+	buf->sz = init_sz;
+	buf->rsz_ratio = 90;
+	
+	(buf->types).buf = calloc(20, sizeof(size_t));
+	(buf->types).sz = 20 * sizeof(size_t);
+	(buf->types).used_sz = 0;
+	(buf->types).rsz_ratio = 90;
+
+	return 0;
+}
+
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
 	
@@ -43,10 +57,7 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	// TODO: Handle case where _ceb_buffer_sz_t runs out of size_t slots
 	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
 
-	if (!cbtb_idx)
-		(buf->types).buf[cbtb_idx] = sz;
-	else
-		(buf->types).buf[cbtb_idx] = sz + (buf->types).buf[cbtb_idx-1];
+	(buf->types).buf[cbtb_idx] = sz + (buf->types).buf[cbtb_idx-1];
 
 	return 0;
 }
@@ -57,6 +68,10 @@ char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
 	memmove(seek_ptr, (void*)((uintptr_t)seek_ptr + (uintptr_t)sizeof(size_t)), buf->sz - ((uintptr_t)seek_ptr - (uintptr_t)buf->buf));
 	buf->used_sz -= sizeof(size_t);
 	return 0;
+}
+
+void *ceb_get_object(ceb_buffer_t *buf, size_t idx) {
+	return 
 }
 
 char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
