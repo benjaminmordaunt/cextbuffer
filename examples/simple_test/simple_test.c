@@ -26,7 +26,7 @@ int main() {
 	assert(buffer.used_sz == (sizeof a) + (sizeof c));
 
 	// Get 'c', which is now located at index 1.
-	unsigned char c_get = (unsigned char)ceb_get_object(&buffer, 1);
+	unsigned char c_get = CEXTGET(&buffer, 1, unsigned char);
 	assert(c_get == c);
 
 	return 0;
