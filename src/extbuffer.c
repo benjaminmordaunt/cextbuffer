@@ -11,13 +11,6 @@
 	#define CEXTBUFFER_ALIGN 1
 #endif /* CEXTBUFFER_ALIGN */
 
-#define CEXTARG(x) x, (sizeof x)
-#define CEXTGET(buf, idx, type) *((type*)ceb_get_object(buf, idx))
-
-#include <stdlib.h>
-#include <string.h>
-#include <stdint.h>
-
 typedef struct ceb_buffer_sz {
 	size_t sz;
 	size_t used_sz;
@@ -88,4 +81,9 @@ char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
 	return 0;
 }
 
+char ceb_free_buffer(ceb_buffer_t *buf) {
+	free(buf->buf);
+	free((buf->types).buf);
 
+	return 0;
+}

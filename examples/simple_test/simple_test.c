@@ -29,5 +29,8 @@ int main() {
 	unsigned char c_get = CEXTGET(&buffer, 1, unsigned char);
 	assert(c_get == c);
 
+	// Free buffer once no longer needed.
+	ceb_free_buffer(&buf);
+
 	return 0;
 }
