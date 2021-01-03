@@ -19,8 +19,8 @@ int main() {
 	ceb_init_buffer(&buffer, 4);
 
 	// Add the three letters.
-	ceb_append_object(&buffer, CEXTARG(a));
-	ceb_append_object(&buffer, CEXTARG(b));
+	CEXTPUT(&buffer, a);
+	CEXTPUT(&buffer, b);
 	ceb_append_object(&buffer, CEXTARG(c));
 
 	// Interpret the buffer as a string.

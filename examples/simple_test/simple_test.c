@@ -15,8 +15,8 @@ int main() {
 	ceb_init_buffer(&buffer, initial_buffer_size);
 
 	// Add our arbitrarily sized objects using the CEXTARG macro
-	ceb_append_object(&buffer, CEXTARG(a));
-	ceb_append_object(&buffer, CEXTARG(b));
+	CEXTPUT(&buffer, a);
+	CEXTPUT(&buffer, b);
 	ceb_append_object(&buffer, &c, sizeof c); // Alternative syntax
 
 	// Remove the 'b' object by index
