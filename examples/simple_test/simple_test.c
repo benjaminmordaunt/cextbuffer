@@ -17,7 +17,7 @@ int main() {
 	// Add our arbitrarily sized objects using the CEXTARG macro
 	ceb_append_object(&buffer, CEXTARG(a));
 	ceb_append_object(&buffer, CEXTARG(b));
-	ceb_append_object(&buffer, c, sizeof c); // Alternative syntax
+	ceb_append_object(&buffer, &c, sizeof c); // Alternative syntax
 
 	// Remove the 'b' object by index
 	ceb_remove_object(&buffer, 1);
@@ -30,7 +30,7 @@ int main() {
 	assert(c_get == c);
 
 	// Free buffer once no longer needed.
-	ceb_free_buffer(&buf);
+	ceb_free_buffer(&buffer);
 
 	return 0;
 }
