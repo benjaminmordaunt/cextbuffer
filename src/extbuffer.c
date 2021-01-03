@@ -55,13 +55,16 @@ void *ceb_get_object(ceb_buffer_t *buf, size_t idx) {
 }
 
 char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
-	void *seek_ptr;
+	char *seek_ptr;
 	
 	// Get accumulated type length
-	seek_ptr = (buf->types).buf[idx]; 
+	seek_ptr = buf->buf + (buf->types).buf[idx]; 
 
-	memmove(seek_ptr, (void*)((uintptr_t)seek_ptr + (uintptr_t)(buf->types).buf[i]), buf->types.sz - ((uintptr_t)seek_ptr - (uintptr_t)buf->buf));
-	buf->used_sz -= (buf->types).buf[i];
+	// Calculate type length from accumulated lengths
+	size_t t_len = (buf->types).buf[idx+1] - (buf->types).buf[idx];
+
+	memmove(seek_ptr, seek_ptr + t_len, buf->sz - (seek_ptr - buf->buf));
+	buf->used_sz -= t_len;
 
 	// Call to remove corresponding type size
 	_ceb_remove_type_sz(&buf->types, idx);
