@@ -30,28 +30,29 @@ char ceb_init_buffer(ceb_buffer_t *buf, size_t init_sz) {
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
 	
-	memcpy((void*)((uintptr_t)buf->buf + buf->used_sz), obj_ref, sz); // Note that this assumes that the caller was truthful about size. 
+	memcpy(buf->buf + buf->used_sz, obj_ref, sz); // Note that this assumes that the caller was truthful about size. 
 	buf->used_sz += sz;
 
 	// Add type size
 	// TODO: Handle case where _ceb_buffer_sz_t runs out of size_t slots
 	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
 
-	(buf->types).buf[cbtb_idx] = sz + (buf->types).buf[cbtb_idx-1];
+	(buf->types).buf[cbtb_idx+1] = sz + (buf->types).buf[cbtb_idx];
 
 	return 0;
 }
 
 char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
-	size_t *seek_ptr = buf->buf + idx;
+	size_t *seek_ptr = buf->buf + idx + 1;
 
-	memmove(seek_ptr, seek_ptr + 1, buf->sz - (seek_ptr - buf->buf));
+	memmove(seek_ptr, seek_ptr + 1, buf->sz - (seek_ptr + 1 - buf->buf));
 	buf->used_sz -= sizeof(size_t);
 	return 0;
 }
 
-void *ceb_get_object(ceb_buffer_t *buf, size_t idx) {
-	return 
+char *ceb_get_object(ceb_buffer_t *buf, size_t idx) {
+	char *obj_ref = buf->buf + (buf->types).buf[idx];	 
+	return obj_ref;
 }
 
 char ceb_remove_object(ceb_buffer_t *buf, size_t idx) {
