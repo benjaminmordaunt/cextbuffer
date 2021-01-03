@@ -1,2 +1,2 @@
 # cextbuffer
-An extending buffer for use in C, with efficient relocations.
+An extending, type-agnostic buffer for use in C, with efficient relocations.
