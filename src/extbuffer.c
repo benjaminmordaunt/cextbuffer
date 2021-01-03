@@ -38,6 +38,7 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
 
 	(buf->types).buf[cbtb_idx+1] = sz + (buf->types).buf[cbtb_idx];
+	(buf->types).used_sz += sizeof(size_t);
 
 	return 0;
 }
@@ -45,7 +46,7 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
 	size_t *seek_ptr = buf->buf + idx + 1;
 
-	memmove(seek_ptr, seek_ptr + 1, buf->sz - (seek_ptr + 1 - buf->buf));
+	memmove(seek_ptr, seek_ptr + 1, buf->sz - ((char*)seek_ptr - (char*)buf->buf + sizeof(size_t)));
 	buf->used_sz -= sizeof(size_t);
 	return 0;
 }

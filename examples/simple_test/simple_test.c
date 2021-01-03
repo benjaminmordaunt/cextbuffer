@@ -9,7 +9,7 @@ int main() {
 	unsigned char c = 1;
 
 	// Create a new buffer
-	ceb_buffer_t buffer;
+	ceb_buffer_t buffer = {0};
 	
 	// Initialise the buffer
 	ceb_init_buffer(&buffer, initial_buffer_size);
