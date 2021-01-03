@@ -9,7 +9,7 @@
 #ifndef _H_EXTBUFFER
 #define _H_EXTBUFFER
 
-#define CEXTARG(x) &x, (sizeof x)
+#define CEXTPUT(buf, x) ceb_append_object(buf, &x, (sizeof x))
 #define CEXTGET(buf, idx, type) *((type*)ceb_get_object(buf, idx))
 
 #include <stdlib.h>
