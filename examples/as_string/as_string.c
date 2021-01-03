@@ -21,7 +21,7 @@ int main() {
 	// Add the three letters.
 	CEXTPUT(&buffer, a);
 	CEXTPUT(&buffer, b);
-	ceb_append_object(&buffer, CEXTARG(c));
+	ceb_append_object(&buffer, &c, sizeof c);
 
 	// Interpret the buffer as a string.
 	printf("%s\r\n", buffer.buf);
