@@ -19,8 +19,8 @@ char ceb_init_buffer(ceb_buffer_t *buf, size_t init_sz) {
 	buf->sz = init_sz;
 	buf->rsz_ratio = 90;
 	
-	(buf->types).buf = calloc(20, sizeof(size_t));
-	(buf->types).sz = 20 * sizeof(size_t);
+	(buf->types).buf = calloc(init_sz / 4, sizeof(size_t));
+	(buf->types).sz = (init_sz / 4) * sizeof(size_t);
 	(buf->types).used_sz = 0;
 	(buf->types).rsz_ratio = 90;
 
