@@ -27,6 +27,21 @@ char ceb_init_buffer(ceb_buffer_t *buf, size_t init_sz) {
 	return 0;
 }
 
+char _ceb_buffer_expand(ceb_buffer_t *buf) {
+	char *new_mem = realloc(buf->buf, buf->sz * 2);
+
+	if (new_mem) {
+		// There is no `crealloc`, so need to initialise new memory as 0.
+		// This is to allow the buffer to be interpreted as a string.
+		memset(new_mem + buf->sz, 0, buf->sz);
+
+		buf->buf = new_mem;
+		buf->sz *= 2;
+		return 0;
+	}	
+	return -1;
+}
+
 char _ceb_type_sz_expand(_ceb_buffer_sz_t *buf) {
 	size_t *new_mem = realloc(buf->buf, buf->sz * 2);
 	// Zero initialisation not required for sz buffer.
@@ -39,14 +54,17 @@ char _ceb_type_sz_expand(_ceb_buffer_sz_t *buf) {
 }
 
 char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
-	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
+	if(100 * (buf->used_sz + sz) > buf->rsz_ratio * buf->sz) { 
+		       // Resizing of buffer required.
+		       _ceb_buffer_expand(buf);	
+	} 
 	
 	memcpy(buf->buf + buf->used_sz, obj_ref, sz); // Note that this assumes that the caller was truthful about size. 
 	buf->used_sz += sz;
 
 
 	if(100 * ((buf->types).used_sz + sizeof(size_t)) > (buf->types).rsz_ratio * (buf->types).sz)
-		_ceb_type_sz_expand(buf->types);	
+		_ceb_type_sz_expand(&buf->types);	
 
 	// Add type size
 	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
