@@ -43,6 +43,17 @@ char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
 	return 0;
 }
 
+char _ceb_type_sz_expand(_ceb_buffer_sz_t *buf) {
+	size_t *new_mem = realloc(buf->buf, buf->sz * 2);
+	// Zero initialisation not required for sz buffer.
+	if (new_mem) {
+		buf->buf = new_mem;
+		buf->sz *= 2;
+		return 0;
+	}	
+	return -1;
+}
+
 char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
 	size_t *seek_ptr = buf->buf + idx + 1;
 
