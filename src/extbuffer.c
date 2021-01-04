@@ -27,22 +27,6 @@ char ceb_init_buffer(ceb_buffer_t *buf, size_t init_sz) {
 	return 0;
 }
 
-char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
-	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
-	
-	memcpy(buf->buf + buf->used_sz, obj_ref, sz); // Note that this assumes that the caller was truthful about size. 
-	buf->used_sz += sz;
-
-	// Add type size
-	// TODO: Handle case where _ceb_buffer_sz_t runs out of size_t slots
-	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
-
-	(buf->types).buf[cbtb_idx+1] = sz + (buf->types).buf[cbtb_idx];
-	(buf->types).used_sz += sizeof(size_t);
-
-	return 0;
-}
-
 char _ceb_type_sz_expand(_ceb_buffer_sz_t *buf) {
 	size_t *new_mem = realloc(buf->buf, buf->sz * 2);
 	// Zero initialisation not required for sz buffer.
@@ -52,6 +36,25 @@ char _ceb_type_sz_expand(_ceb_buffer_sz_t *buf) {
 		return 0;
 	}	
 	return -1;
+}
+
+char ceb_append_object(ceb_buffer_t *buf, void *obj_ref, size_t sz) {
+	if(buf->sz - buf->used_sz < sz) { return 1; } // In future, this will resize the underlying buffer.
+	
+	memcpy(buf->buf + buf->used_sz, obj_ref, sz); // Note that this assumes that the caller was truthful about size. 
+	buf->used_sz += sz;
+
+
+	if(100 * ((buf->types).used_sz + sizeof(size_t)) > (buf->types).rsz_ratio * (buf->types).sz)
+		_ceb_type_sz_expand(buf->types);	
+
+	// Add type size
+	int cbtb_idx = (buf->types).used_sz / sizeof(size_t);
+
+	(buf->types).buf[cbtb_idx+1] = sz + (buf->types).buf[cbtb_idx];
+	(buf->types).used_sz += sizeof(size_t);
+
+	return 0;
 }
 
 char _ceb_remove_type_sz(_ceb_buffer_sz_t *buf, size_t idx) {
