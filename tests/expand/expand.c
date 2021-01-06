@@ -13,14 +13,8 @@ START_TEST (test_buffer_expansion)
 {
 	char data = 'a';
 
-	// Create a new buffer.
-	ceb_buffer_t buf = {0};
-
-	// Initialise the buffer.
-	ceb_init_buffer(&buf, 10);
-
-	// Specify the resize ratio to be 50%
-	buf.rsz_ratio = 50;
+	// Create a new buffer, with a resize ratio of 50%.
+	ceb_buffer_t buf = { .buf = calloc(10, 1), .sz = 10, .rsz_ratio = 50, .types = { .buf = calloc(10, sizeof(size_t)), .sz = 10 * sizeof(size_t), .rsz_ratio = 90 } };
 
 	// Add 4 chars to the buffer and ensure that the size remains the same.
 	for(int i = 0; i < 4; i++) {
@@ -35,6 +29,9 @@ START_TEST (test_buffer_expansion)
 	}
 
 	ck_assert_int_eq(buf.sz, 20);
+
+	// Free the buffer.
+	ceb_free_buffer(&buf);
 }
 END_TEST /* test_buffer_expansion */
 
