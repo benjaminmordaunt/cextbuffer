@@ -1,0 +1,22 @@
+name: C & GNU Make CI
+
+on:
+  push:
+    branches: [ mit-licensed ]
+  pull_request:
+    branches: [ mit-licensed ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Make Library
+      working-directory: ./src
+      run: make all
+    - name: Make Examples
+      working-directory: ./examples
+      run: make all
