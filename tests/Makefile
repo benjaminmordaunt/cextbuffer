@@ -9,5 +9,7 @@ all:
 	mkdir -p $O
 	$(MAKE) $O/expand
 
-clean:
-	rm -r build
+.PHONY: run_tests
+
+run_tests:
+	./$O/expand
