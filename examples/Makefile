@@ -11,3 +11,7 @@ LINK_LIB  := extbuffer
 
 clean:
 	rm ../build/examples/simple_test ../build/examples/as_string
+	
+all:
+	$(MAKE) ../build/examples/simple_test
+	$(MAKE) ../build/examples/as_string
