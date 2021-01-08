@@ -22,7 +22,7 @@ jobs:
       working-directory: ./examples
       run: make all
     - name: Install Dependencies for Tests
-      run: apt install check pkgconf
+      run: sudo apt-get install check pkgconf
     - name: Build Tests
       working-directory: ./tests
       run: make all
