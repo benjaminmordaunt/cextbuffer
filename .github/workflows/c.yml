@@ -21,3 +21,13 @@ jobs:
     - name: Make Examples
       working-directory: ./examples
       run: make all
+    - name: Install Dependencies for Tests
+      run: apt install check pkgconf
+    - name: Build Tests
+      working-directory: ./tests
+      run: make all
+    - name: Run Tests
+      working-directory: ./build/tests
+      run: |
+        chmod +x expand
+        ./expand
